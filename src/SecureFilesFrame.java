@@ -25,32 +25,42 @@ public class SecureFilesFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * interactuadores
+	 */
+	JPanel presentationPanel; //titulo y descripcion
+	JLabel title; // titulo aplicacion
+	JLabel description; //descripcion de la aplicacion
+	JPanel buttonsPanel; //jpanel de los botones
+	JButton addImageButton; //boton de addimage
+	JButton decrypButton; //boton de desencriptar
+	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SecureFilesFrame window = new SecureFilesFrame();
-					window.setVisible(true);
+					//SecureFilesFrame window = new SecureFilesFrame();
+					//window.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Create the application.
 	 */
 	public SecureFilesFrame() {
-		initialize();
+		createWindow( );		
+
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void createWindow() {
 		setPreferredSize(new Dimension(450, 300));
 		setTitle("SecureFiles");
 		setLocationRelativeTo(null); // Centering on screen...
@@ -63,14 +73,13 @@ public class SecureFilesFrame extends JFrame{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
 		/**
 		 *  jpanel donde apareceran el titulo y la descripcion
 		 */
-		JPanel presentationPanel = new JPanel();
+		presentationPanel = new JPanel();
 		presentationPanel.setBounds(10, 10, 424, 109);
 		getContentPane().add(presentationPanel);
 		GridBagLayout layout_presentationPanel = new GridBagLayout();
@@ -83,7 +92,7 @@ public class SecureFilesFrame extends JFrame{
 		/**
 		 *  titulo aplicacion
 		 */
-		JLabel title = new JLabel("Bienvenido a SecureFiles");
+		title = new JLabel("Bienvenido a SecureFiles");
 		GridBagConstraints constraints_title = new GridBagConstraints();
 		constraints_title.gridheight = 2;
 		constraints_title.insets = new Insets(0, 0, 5, 0);
@@ -99,7 +108,7 @@ public class SecureFilesFrame extends JFrame{
 		/**
 		 *  descripcion aplicacion
 		 */
-		JLabel description = new JLabel(
+		description = new JLabel(
 				"<html><body>La mejor forma de que tus archivos privados,\r\n<br>sigan siendo privados.</body></html>");
 		GridBagConstraints constraints_description = new GridBagConstraints();
 		constraints_description.anchor = GridBagConstraints.WEST;
@@ -114,7 +123,7 @@ public class SecureFilesFrame extends JFrame{
 		/**
 		 * Jpanel de los botones
 		 */
-		JPanel buttonsPanel = new JPanel();
+		buttonsPanel = new JPanel();
 		buttonsPanel.setBounds(10, 130, 200, 105);
 		getContentPane().add(buttonsPanel);
 		GridBagLayout layout_buttonsPanel = new GridBagLayout();
@@ -127,7 +136,7 @@ public class SecureFilesFrame extends JFrame{
 		/**
 		 *  botones
 		 */
-		JButton addImageButton = new JButton("Añadir imagen nueva");
+		addImageButton = new JButton("Añadir imagen nueva");
 		addImageButton.setMaximumSize(new Dimension(200, 50));
 		addImageButton.setPreferredSize(new Dimension(200, 50));
 		addImageButton.setMinimumSize(new Dimension(200, 50));
@@ -137,7 +146,7 @@ public class SecureFilesFrame extends JFrame{
 		constraints_addImage.gridy = 0;
 		buttonsPanel.add(addImageButton, constraints_addImage);
 
-		JButton decrypButton = new JButton("Desencriptar imagenes");
+		decrypButton = new JButton("Desencriptar imagenes");
 		decrypButton.setPreferredSize(new Dimension(200, 50));
 		decrypButton.setMinimumSize(new Dimension(200, 50));
 		decrypButton.setMaximumSize(new Dimension(200, 50));
@@ -145,26 +154,6 @@ public class SecureFilesFrame extends JFrame{
 		constraints_decrypt.gridx = 0;
 		constraints_decrypt.gridy = 1;
 		buttonsPanel.add(decrypButton, constraints_decrypt);
-
-		
-		/**
-		 *  listeners para los botones
-		 */
-		addImageButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				AddImageFrame addImageFrame = new AddImageFrame();
-				//addImageFrame.initialize();
-				addImageFrame.setVisible(true);
-				setVisible(false);
-				//addImageFrame.main();
-			}
-		});
-		addImageButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-			}
-		});
 
 	}
 }
