@@ -23,15 +23,31 @@ public class AddImageFrame extends JFrame{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JTextField newFileRtextRoute;
-	private JTextField outDirTextRoute;
-	private JTextField fileNameValue;
-	private JPasswordField passwordField;
-
+	/**
+	 * interactuadores
+	 */
+	JTextField fileNameValue;
+	JPanel newFilePanel; // panel del selector de archivo nuevo
+	JLabel newFileText; //titulo para seleccionar nuevo archivo
+	JTextField newFileRtextRoute; // campo texto mostrar ruta nuevo archivo a encriptar
+	JButton newFileSelectButton; // Boton seleccionar para newFile
+	JPanel outputDirectorypanel; // Panel de selcciond e directorio de salida
+	JLabel outputDirectoryText; // texto descripcion directorio
+	JTextField outDirTextRoute; // texto mostrar ruta de salida
+	JButton outDirButton; // boton seleccionar de ruta de salida
+	JPanel fileNamePanel; // Panel nombre fichero de salida 
+	JLabel fileNameDescriptor; // descripcion del campo nombre archivo salida
+	JPanel passPanel; // pass panel
+	JLabel passDescriptor; //pass descriptor
+	JPasswordField passwordField; // Campo de la pass, asteriscos
+	JPanel controlButtonsPanel; // Panel botones de control
+	JButton anteriorButton; // boton de anterior
+	JButton siguienteButton; // boton de siguiente
+	JButton cancelarButton; // boton de cancelar
 	/**
 	 * Launch the application.
 	 */
-	public static void main() {
+	/*public static void main() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -42,7 +58,7 @@ public class AddImageFrame extends JFrame{
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Create the application.
@@ -73,7 +89,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * Panel del selector de archivo nuevo
 		 */
-		JPanel newFilePanel = new JPanel();
+		newFilePanel = new JPanel();
 		newFilePanel.setBounds(10, 11, 424, 55);
 		 getContentPane().add(newFilePanel);
 		GridBagLayout cs_newFilePanel = new GridBagLayout();
@@ -86,7 +102,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * Titulo para seleccionar nuevo archivo
 		 */
-		JLabel newFileText = new JLabel("Seleccione el archivo que quiere encriptar.");
+		newFileText = new JLabel("Seleccione el archivo que quiere encriptar.");
 		GridBagConstraints cs_newFileText = new GridBagConstraints();
 		cs_newFileText.anchor = GridBagConstraints.WEST;
 		cs_newFileText.gridwidth = 2;
@@ -112,7 +128,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * Boton seleccionar para newFile
 		 */
-		JButton newFileSelectButton = new JButton("Seleccionar");
+		newFileSelectButton = new JButton("Seleccionar");
 		GridBagConstraints cs_newFileSelectButton = new GridBagConstraints();
 		cs_newFileSelectButton.insets = new Insets(0, 0, 5, 0);
 		cs_newFileSelectButton.gridx = 1;
@@ -127,7 +143,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * Panel de selcciond e directorio de salida
 		 */
-		JPanel outputDirectorypanel = new JPanel();
+		outputDirectorypanel = new JPanel();
 		outputDirectorypanel.setBounds(10, 77, 424, 55);
 		 getContentPane().add(outputDirectorypanel);
 		GridBagLayout cs_outputDir = new GridBagLayout();
@@ -140,7 +156,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * texto descripcion directorio
 		 */
-		JLabel outputDirectoryText = new JLabel("Seleccione el directorio donde quiere desencriptar.");
+		outputDirectoryText = new JLabel("Seleccione el directorio donde quiere desencriptar.");
 		outputDirectoryText.setForeground(Color.DARK_GRAY);
 		outputDirectoryText.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		GridBagConstraints cs_outputDirectoryText = new GridBagConstraints();
@@ -166,7 +182,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * boton seleccionar de ruta de salida
 		 */
-		JButton outDirButton = new JButton("Seleccionar");
+		outDirButton = new JButton("Seleccionar");
 		GridBagConstraints cs_outDirButton = new GridBagConstraints();
 		cs_outDirButton.insets = new Insets(0, 0, 5, 0);
 		cs_outDirButton.gridx = 1;
@@ -178,7 +194,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * Panel nombre fichero de salida 
 		 */
-		JPanel fileNamePanel = new JPanel();
+		fileNamePanel = new JPanel();
 		fileNamePanel.setBounds(10, 143, 424, 20);
 		 getContentPane().add(fileNamePanel);
 		GridBagLayout gbl_fileNamePanel = new GridBagLayout();
@@ -191,7 +207,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * descripcion del campo nombre archivo salida
 		 */
-		JLabel fileNameDescriptor = new JLabel("Introduzca nombre del fichero de salida: ");
+		fileNameDescriptor = new JLabel("Introduzca nombre del fichero de salida: ");
 		fileNameDescriptor.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagConstraints cs_fileNameDescriptor = new GridBagConstraints();
 		cs_fileNameDescriptor.anchor = GridBagConstraints.EAST;
@@ -220,7 +236,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * pass panel
 		 */
-		JPanel passPanel = new JPanel();
+		passPanel = new JPanel();
 		passPanel.setBounds(10, 187, 424, 20);
 		 getContentPane().add(passPanel);
 		GridBagLayout gbl_passPanel = new GridBagLayout();
@@ -257,7 +273,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * Panel botones de control
 		 */
-		JPanel controlButtonsPanel = new JPanel();
+		 controlButtonsPanel = new JPanel();
 		controlButtonsPanel.setBounds(10, 239, 434, 33);
 		 getContentPane().add(controlButtonsPanel);
 		controlButtonsPanel.setLayout(new FlowLayout(FlowLayout.TRAILING, 5, 5));
@@ -265,7 +281,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * boton de anterior
 		 */
-		JButton anteriorButton = new JButton("Anterior");
+		anteriorButton = new JButton("Anterior");
 		anteriorButton.setPreferredSize(new Dimension(90, 23));
 		anteriorButton.setSize(new Dimension(90, 23));
 		controlButtonsPanel.add(anteriorButton);
@@ -273,7 +289,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * boton de siguiente
 		 */
-		JButton siguienteButton = new JButton("Siguiente");
+		siguienteButton = new JButton("Siguiente");
 		siguienteButton.setPreferredSize(new Dimension(90, 23));
 		siguienteButton.setSize(new Dimension(90, 23));
 		controlButtonsPanel.add(siguienteButton);
@@ -281,7 +297,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * boton de cancelar
 		 */
-		JButton cancelarButton = new JButton("Cancelar");
+		cancelarButton = new JButton("Cancelar");
 		cancelarButton.setPreferredSize(new Dimension(90, 23));
 		cancelarButton.setSize(new Dimension(90, 23));
 		controlButtonsPanel.add(cancelarButton);
