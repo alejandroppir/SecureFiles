@@ -16,7 +16,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 
 
-public class AddImageFrame extends JFrame{
+public class DecryptFrame extends JFrame{
 
 	/**
 	 * 
@@ -26,10 +26,10 @@ public class AddImageFrame extends JFrame{
 	 * interactuadores
 	 */
 	JTextField fileNameValue;
-	JPanel newFilePanel; // panel del selector de archivo nuevo
-	JLabel newFileText; //titulo para seleccionar nuevo archivo
-	JTextField newFileRtextRoute; // campo texto mostrar ruta nuevo archivo a encriptar
-	JButton newFileSelectButton; // Boton seleccionar para newFile
+	JPanel encryptedFilePanel; // panel del selector de archivo encriptado
+	JLabel encryptedFileText; //titulo para seleccionar nuevo encriptado
+	JTextField encryptedFileTextRoute; // campo texto mostrar ruta archivo encriptado
+	JButton encryptedFileSelectButton; // Boton seleccionar para newFile
 	JPanel outputDirectorypanel; // Panel de selccion de directorio de salida
 	JLabel outputDirectoryText; // texto descripcion directorio
 	JTextField outDirTextRoute; // texto mostrar ruta de salida
@@ -46,12 +46,12 @@ public class AddImageFrame extends JFrame{
 	/**
 	 * Launch the application.
 	 */
-	/*public static void main() {
+	/*public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AddImageFrame window = new AddImageFrame();
-					window.setVisible(true);
+					DecriptFrame window = new DecriptFrame();
+					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -62,7 +62,7 @@ public class AddImageFrame extends JFrame{
 	/**
 	 * Create the application.
 	 */
-	public AddImageFrame() {
+	public DecryptFrame() {
 		initialize();
 		}
 
@@ -86,53 +86,53 @@ public class AddImageFrame extends JFrame{
 		////////////////////////////
 		
 		/**
-		 * Panel del selector de archivo nuevo
+		 * Panel del selector de archivo enciptado
 		 */
-		newFilePanel = new JPanel();
-		newFilePanel.setBounds(10, 11, 424, 55);
-		 getContentPane().add(newFilePanel);
+		encryptedFilePanel = new JPanel();
+		encryptedFilePanel.setBounds(10, 11, 424, 55);
+		 getContentPane().add(encryptedFilePanel);
 		GridBagLayout cs_newFilePanel = new GridBagLayout();
 		cs_newFilePanel.columnWidths = new int[]{0};
 		cs_newFilePanel.rowHeights = new int[]{0};
 		cs_newFilePanel.columnWeights = new double[]{Double.MIN_VALUE};
 		cs_newFilePanel.rowWeights = new double[]{Double.MIN_VALUE};
-		newFilePanel.setLayout(cs_newFilePanel);
+		encryptedFilePanel.setLayout(cs_newFilePanel);
 
 		/**
-		 * Titulo para seleccionar nuevo archivo
+		 * Titulo para seleccionar el archivo encriptado
 		 */
-		newFileText = new JLabel("Seleccione el archivo que quiere encriptar.");
+		encryptedFileText = new JLabel("Seleccione el archivo que quiere desencriptar.");
 		GridBagConstraints cs_newFileText = new GridBagConstraints();
 		cs_newFileText.anchor = GridBagConstraints.WEST;
 		cs_newFileText.gridwidth = 2;
 		cs_newFileText.insets = new Insets(0, 0, 5, 0);
 		cs_newFileText.gridx = 0;
 		cs_newFileText.gridy = 0;
-		newFilePanel.add(newFileText, cs_newFileText);
-		newFileText.setForeground(Color.DARK_GRAY);
-		newFileText.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		encryptedFilePanel.add(encryptedFileText, cs_newFileText);
+		encryptedFileText.setForeground(Color.DARK_GRAY);
+		encryptedFileText.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
 		/**
-		 * campo texto mostrar ruta nuevo archivo a encriptar
+		 * campo texto mostrar ruta archivo a dessencriptar
 		 */
-		newFileRtextRoute = new JTextField();
+		encryptedFileTextRoute = new JTextField();
 		GridBagConstraints newFileRute = new GridBagConstraints();
 		newFileRute.insets = new Insets(0, 0, 5, 5);
 		newFileRute.fill = GridBagConstraints.HORIZONTAL;
 		newFileRute.gridx = 0;
 		newFileRute.gridy = 1;
-		newFilePanel.add(newFileRtextRoute, newFileRute);
-		newFileRtextRoute.setColumns(10);
+		encryptedFilePanel.add(encryptedFileTextRoute, newFileRute);
+		encryptedFileTextRoute.setColumns(10);
 		
 		/**
-		 * Boton seleccionar para newFile
+		 * Boton seleccionar para encripted file
 		 */
-		newFileSelectButton = new JButton("Seleccionar");
+		encryptedFileSelectButton = new JButton("Seleccionar");
 		GridBagConstraints cs_newFileSelectButton = new GridBagConstraints();
 		cs_newFileSelectButton.insets = new Insets(0, 0, 5, 0);
 		cs_newFileSelectButton.gridx = 1;
 		cs_newFileSelectButton.gridy = 1;
-		newFilePanel.add(newFileSelectButton, cs_newFileSelectButton);
+		encryptedFilePanel.add(encryptedFileSelectButton, cs_newFileSelectButton);
 		
 		
 		
@@ -248,7 +248,7 @@ public class AddImageFrame extends JFrame{
 		/**
 		 * Pass descriptor
 		 */
-		JLabel passDescriptor = new JLabel("Introduzca contrase\u00F1a de encriptado: ");
+		JLabel passDescriptor = new JLabel("Introduzca contrase\u00F1a de desencriptado: ");
 		GridBagConstraints gbc_passDescriptor = new GridBagConstraints();
 		gbc_passDescriptor.insets = new Insets(0, 0, 0, 5);
 		gbc_passDescriptor.anchor = GridBagConstraints.EAST;
