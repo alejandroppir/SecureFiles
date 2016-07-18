@@ -8,6 +8,8 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Color;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.Insets;
 import javax.swing.JTextField;
@@ -79,6 +81,7 @@ public class AddImageFrame extends JFrame{
 		 setLocationRelativeTo(null);
 		 setBounds(100, 100, 450, 300);
 		 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setIconImage(new ImageIcon(getClass().getResource("/icon.png")).getImage());
 		 setResizable(false);
 		 getContentPane().setLayout(null);
 		

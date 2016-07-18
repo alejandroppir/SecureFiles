@@ -2,6 +2,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -60,7 +61,8 @@ public class EndDecryptationFrame extends JFrame{
 		setTitle("SecureFiles");
 		setLocationRelativeTo(null); // Centering on screen...
 		setBounds(100, 100, 450, 300);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+		setIconImage(new ImageIcon(getClass().getResource("/icon.png")).getImage());
 		setResizable(false);
 		getContentPane().setLayout(null);
 		

@@ -1,5 +1,7 @@
 import javax.swing.JFrame;
 import java.awt.GridBagLayout;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -60,6 +62,7 @@ public class SecureFilesFrame extends JFrame{
 		setLocationRelativeTo(null); // Centering on screen...
 		setBounds(100, 100, 450, 300);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setIconImage(new ImageIcon(getClass().getResource("/icon.png")).getImage());
 		setResizable(false);
 		getContentPane().setLayout(null);
 

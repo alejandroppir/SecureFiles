@@ -18,15 +18,14 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.commons.io.IOUtils;
-
 import javax.swing.JPanel;
 
 public class SecureFiles {
 
 	private static JPanel contentPane;
-	static int returnValue = 0;
-	static boolean addImageFrameSiguiente = false;
-	static boolean decriptFrameSiguiente = false;
+	static int function = 0;
+	static boolean addImageFrameChoose = false;
+	static boolean decryptFrameChoose = false;
 	static int endFrameOption = 0;
 	static AddImageFrame addImageFrame;
 	static SecureFilesFrame presentationFrame;
@@ -47,36 +46,58 @@ public class SecureFiles {
 			// lo inicializas a cero, para que si quieres volver a inicio,
 			// olvides el valor de antes de esa eleccion, y si no, recuerda el
 			// valor, para elegir con el if else
-			returnValue = 0;
-
+			function = 0;
 			presentationFrame.setVisible(true);
 			presentacionFrame();
 			presentationFrame.setVisible(false);
 
 			// Frame principal
 			while (true) {
-				if (returnValue == 1) {
+				endFrameOption=0;
+				if (function == 1) {
 					//parte para add Image Frame
 					addImageFrame = new AddImageFrame();
 					addImageFrame.setVisible(true);
+					System.out.println("1");
 					encryptPhoto();
+					System.out.println("2");
+
 					addImageFrame.dispose();
+					System.out.println("3");
+
 					endEncryptationFrame.setVisible(true);
 					endEncryptationFrame();
-					endEncryptationFrame.setVisible(false);
+					System.out.println("4");
+
 				} else {
 					//parte para decript frame
 					decryptFrame = new DecryptFrame();
 					decryptFrame.setVisible(true);
+					System.out.println("5");
+
 					decryptPhoto();
+					System.out.println("6");
+
 					decryptFrame.dispose();
+					System.out.println("7");
+
 					endDecryptationFrame.setVisible(true);
 					endDecryptationFrame();
-					endDecryptationFrame.setVisible(false);
+					System.out.println("8");
+
 				}
-				
+				while(endFrameOption==0){
+					try {
+						Thread.sleep(1);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+				}
+				endEncryptationFrame.setVisible(false);
+				endDecryptationFrame.setVisible(false);
 				if (endFrameOption == 3) {
-				}
+					System.exit(0);
+					}
 				if (endFrameOption == 2) {
 					continue;
 				}
@@ -92,34 +113,29 @@ public class SecureFiles {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
-				System.out.println("primer listener");
-
-				returnValue = 1;
+				function = 1;
 
 				presentationFrame.decrypButton
 						.removeMouseListener(presentationFrame.decrypButton.getMouseListeners()[1]);
 
 				presentationFrame.addImageButton
 						.removeMouseListener(presentationFrame.addImageButton.getMouseListeners()[1]);
-				System.out.println(presentationFrame.addImageButton.getMouseListeners().length);
 			}
 		});
 		presentationFrame.decrypButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("segundo listener");
 
-				returnValue = 2;
+				function = 2;
 				presentationFrame.addImageButton
 						.removeMouseListener(presentationFrame.addImageButton.getMouseListeners()[1]);
 
 				presentationFrame.decrypButton
 						.removeMouseListener(presentationFrame.decrypButton.getMouseListeners()[1]);
-				System.out.println(presentationFrame.decrypButton.getMouseListeners().length);
 			}
 
 		});
-		while (returnValue == 0) {
+		while (function == 0) {
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e1) {
@@ -136,10 +152,13 @@ public class SecureFiles {
 		FileInputStream fis = null;
 
 		TreeMap<String, Object> campos = addImageFrame();
+		if((int) campos.get("eleccion")!=2){
+			endFrameOption=1;
+			return;
+		}
 
 		File file = (File) campos.get("file");
 		String fileRoute = (String) campos.get("fileroute");
-		System.out.println("Archivo--- "+fileRoute);
 		String[] split = fileRoute.split("\\.");
 		String fileExtension = split[split.length - 1];
 		if (!file.getAbsolutePath().equalsIgnoreCase(fileRoute)) {
@@ -153,7 +172,6 @@ public class SecureFiles {
 		String pass = (String) campos.get("pass");
 
 		byte[] encrypted = Crypter.encrypt(bytess, pass);
-		System.out.println(directory.getAbsolutePath());
 		File outFile = new File(directory.getAbsolutePath() + outFileName);
 
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(outFile, true))) {
@@ -169,9 +187,7 @@ public class SecureFiles {
 			byte[] bytes = new byte[1024];
 			while ((read = inputStream.read(bytes)) != -1) {
 				outputStream.write(bytes, 0, read);
-				System.out.println(".");
 			}
-			System.out.println("sales");
 			outputStream.close();
 		} catch (Exception e) {
 		}
@@ -181,6 +197,7 @@ public class SecureFiles {
 
 	public static TreeMap<String, Object> addImageFrame() {
 		TreeMap<String, Object> retorno = new TreeMap<String, Object>();
+		addImageFrameChoose=false;
 
 		addImageFrame.newFileSelectButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -210,15 +227,34 @@ public class SecureFiles {
 				// addImageFrame.newFileSelectButton.removeMouseListener(addImageFrame.newFileSelectButton.getMouseListeners()[1]);
 			}
 		});
+		
+		addImageFrame.anteriorButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				retorno.put("eleccion", 1);
+				addImageFrameChoose=true;
+
+			}
+		});
 		addImageFrame.siguienteButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				retorno.put("eleccion", 2);
+				addImageFrameChoose = true;
+				retorno.put("fileroute", addImageFrame.newFileRtextRoute.getText());
 
-				addImageFrameSiguiente = true;
+			}
+		});
+		addImageFrame.cancelarButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				retorno.put("eleccion", 3);
+				addImageFrameChoose=true;
+				
 			}
 		});
 		do {
-			while (addImageFrameSiguiente == false) {
+			while (addImageFrameChoose == false) {
 				try {
 
 					Thread.sleep(1);
@@ -226,20 +262,29 @@ public class SecureFiles {
 					e1.printStackTrace();
 				}
 			}
+			if((int) retorno.get("eleccion")!=2){
+				return retorno;
+				
+			}
 			if (retorno.containsKey("file")) {
 				if (!((File) retorno.get("file")).getAbsolutePath()
 						.equalsIgnoreCase((String) retorno.get("fileroute"))) {
-					System.out.println("el campo del archivo de origen esta mal");
-					addImageFrameSiguiente = false;
+					addImageFrame.outDirTextRoute.setText("** Campo Incorrecto **");
+					addImageFrameChoose = false;
 				}
 			} else {
-				addImageFrame.newFileSelectButton.removeMouseListener(addImageFrame.newFileSelectButton.getMouseListeners()[1]);
-				addImageFrame.outDirButton.removeMouseListener(addImageFrame.outDirButton.getMouseListeners()[1]);
-				addImageFrame.siguienteButton.removeMouseListener(addImageFrame.siguienteButton.getMouseListeners()[1]);
-				addImageFrame.siguienteButton.removeMouseListener(addImageFrame.siguienteButton.getMouseListeners()[1]);
+				addImageFrameChoose=false;
+			}
+			if(addImageFrame.fileNameValue.getText().equals("") || String.valueOf(addImageFrame.passwordField.getPassword()).equals("")){
+				addImageFrameChoose=false;
 			}
 
-		} while (!addImageFrameSiguiente);
+		} while (!addImageFrameChoose);
+		addImageFrame.anteriorButton.removeMouseListener(addImageFrame.anteriorButton.getMouseListeners()[1]);
+		addImageFrame.cancelarButton.removeMouseListener(addImageFrame.cancelarButton.getMouseListeners()[1]);
+		addImageFrame.newFileSelectButton.removeMouseListener(addImageFrame.newFileSelectButton.getMouseListeners()[1]);
+		addImageFrame.outDirButton.removeMouseListener(addImageFrame.outDirButton.getMouseListeners()[1]);
+		addImageFrame.siguienteButton.removeMouseListener(addImageFrame.siguienteButton.getMouseListeners()[1]);
 		retorno.put("outfilename", addImageFrame.fileNameValue.getText());
 		retorno.put("pass", String.valueOf(addImageFrame.passwordField.getPassword()));
 
@@ -254,7 +299,6 @@ public class SecureFiles {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
-			System.out.println("Error en el despliegue de la ventana de seleccion de ficheros");
 			e.printStackTrace();
 		}
 		// Creamos el objeto JFileChooser
@@ -281,12 +325,12 @@ public class SecureFiles {
 			public void mouseClicked(MouseEvent e) {
 
 				endFrameOption = 1;
-				endEncryptationFrame.inicioButton
+				/*endEncryptationFrame.inicioButton
 						.removeMouseListener(endEncryptationFrame.inicioButton.getMouseListeners()[1]);
 				endEncryptationFrame.encriptarOtroButton
 						.removeMouseListener(endEncryptationFrame.encriptarOtroButton.getMouseListeners()[1]);
 				endEncryptationFrame.cerrarButton
-						.removeMouseListener(endEncryptationFrame.cerrarButton.getMouseListeners()[1]);
+						.removeMouseListener(endEncryptationFrame.cerrarButton.getMouseListeners()[1]);*/
 			}
 		});
 		endEncryptationFrame.encriptarOtroButton.addMouseListener(new MouseAdapter() {
@@ -294,25 +338,25 @@ public class SecureFiles {
 			public void mouseClicked(MouseEvent e) {
 
 				endFrameOption = 2;
-				endEncryptationFrame.inicioButton
+				/*endEncryptationFrame.inicioButton
 						.removeMouseListener(endEncryptationFrame.inicioButton.getMouseListeners()[1]);
 				endEncryptationFrame.encriptarOtroButton
 						.removeMouseListener(endEncryptationFrame.encriptarOtroButton.getMouseListeners()[1]);
 				endEncryptationFrame.cerrarButton
-						.removeMouseListener(endEncryptationFrame.cerrarButton.getMouseListeners()[1]);
+						.removeMouseListener(endEncryptationFrame.cerrarButton.getMouseListeners()[1]);*/
 			}
 		});
 		endEncryptationFrame.cerrarButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
-				endFrameOption = 2;
-				endEncryptationFrame.inicioButton
+				endFrameOption = 3;
+				/*endEncryptationFrame.inicioButton
 						.removeMouseListener(endEncryptationFrame.inicioButton.getMouseListeners()[1]);
 				endEncryptationFrame.encriptarOtroButton
 						.removeMouseListener(endEncryptationFrame.encriptarOtroButton.getMouseListeners()[1]);
 				endEncryptationFrame.cerrarButton
-						.removeMouseListener(endEncryptationFrame.cerrarButton.getMouseListeners()[1]);
+						.removeMouseListener(endEncryptationFrame.cerrarButton.getMouseListeners()[1]);*/
 			}
 		});
 		while (endFrameOption == 0) {
@@ -331,12 +375,12 @@ public class SecureFiles {
 			public void mouseClicked(MouseEvent e) {
 
 				endFrameOption = 1;
-				endDecryptationFrame.inicioButton
+				/*endDecryptationFrame.inicioButton
 						.removeMouseListener(endDecryptationFrame.inicioButton.getMouseListeners()[1]);
 				endDecryptationFrame.desencriptarOtroButton
 						.removeMouseListener(endDecryptationFrame.desencriptarOtroButton.getMouseListeners()[1]);
 				endDecryptationFrame.cerrarButton
-						.removeMouseListener(endDecryptationFrame.cerrarButton.getMouseListeners()[1]);
+						.removeMouseListener(endDecryptationFrame.cerrarButton.getMouseListeners()[1]);*/
 			}
 		});
 		endDecryptationFrame.desencriptarOtroButton.addMouseListener(new MouseAdapter() {
@@ -344,25 +388,25 @@ public class SecureFiles {
 			public void mouseClicked(MouseEvent e) {
 
 				endFrameOption = 2;
-				endDecryptationFrame.inicioButton
+				/*endDecryptationFrame.inicioButton
 						.removeMouseListener(endDecryptationFrame.inicioButton.getMouseListeners()[1]);
 				endDecryptationFrame.desencriptarOtroButton
 						.removeMouseListener(endDecryptationFrame.desencriptarOtroButton.getMouseListeners()[1]);
 				endDecryptationFrame.cerrarButton
-						.removeMouseListener(endDecryptationFrame.cerrarButton.getMouseListeners()[1]);
+						.removeMouseListener(endDecryptationFrame.cerrarButton.getMouseListeners()[1]);*/
 			}
 		});
 		endDecryptationFrame.cerrarButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
-				endFrameOption = 2;
-				endDecryptationFrame.inicioButton
+				endFrameOption = 3;
+				/*endDecryptationFrame.inicioButton
 						.removeMouseListener(endDecryptationFrame.inicioButton.getMouseListeners()[1]);
 				endDecryptationFrame.desencriptarOtroButton
 						.removeMouseListener(endDecryptationFrame.desencriptarOtroButton.getMouseListeners()[1]);
 				endDecryptationFrame.cerrarButton
-						.removeMouseListener(endDecryptationFrame.cerrarButton.getMouseListeners()[1]);
+						.removeMouseListener(endDecryptationFrame.cerrarButton.getMouseListeners()[1]);*/
 			}
 		});
 		while (endFrameOption == 0) {
@@ -375,11 +419,14 @@ public class SecureFiles {
 		return;
 	}
 	
-	private static void decryptPhoto() throws Exception{
+	private static void decryptPhoto(){
 		OutputStream outputStream = null;
 
 		TreeMap<String, Object> campos = decryptFrame();
-
+		if((int) campos.get("eleccion")!=2){
+			endFrameOption=1;
+			return;
+		}
 		File file = (File) campos.get("file");
 		
 		String pass = (String) campos.get("pass");
@@ -398,6 +445,9 @@ public class SecureFiles {
 					extension = br.readLine();
 				}
 				byte[] decrypted = Crypter.decrypt(br.readLine().getBytes(), pass);
+				if(decrypted==null){
+					return;
+				}
 				InputStream inputStream = new ByteArrayInputStream(decrypted);
 				
 				try {
@@ -420,12 +470,18 @@ public class SecureFiles {
 			}
 			br.close();
 		} catch (IOException e) {
+			System.out.println("excepcion");
 			e.printStackTrace();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			System.out.println("algo imprimiendo aqui");
+			e1.printStackTrace();
 		}
 	}
 	
 	private static TreeMap<String, Object> decryptFrame(){
 		TreeMap<String, Object> retorno = new TreeMap<String, Object>();
+		decryptFrameChoose=false;
 
 		decryptFrame.encryptedFileSelectButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -453,15 +509,33 @@ public class SecureFiles {
 
 			}
 		});
+		decryptFrame.anteriorButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				retorno.put("eleccion", 1);
+				decryptFrameChoose=true;
+
+			}
+		});
+		
+		decryptFrame.cancelarButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				retorno.put("eleccion", 3);
+				decryptFrameChoose=true;
+				
+			}
+		});
 		decryptFrame.siguienteButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
-				decriptFrameSiguiente = true;
+				retorno.put("eleccion", 2);
+				decryptFrameChoose = true;
+				retorno.put("fileroute", decryptFrame.encryptedFileTextRoute.getText());
 			}
 		});
 		do {
-			while (decriptFrameSiguiente == false) {
+			while (decryptFrameChoose == false) {
 				try {
 
 					Thread.sleep(1);
@@ -469,20 +543,29 @@ public class SecureFiles {
 					e1.printStackTrace();
 				}
 			}
+			if((int) retorno.get("eleccion")!=2){
+				return retorno;
+				
+			}
 			if (retorno.containsKey("file")) {
 				if (!((File) retorno.get("file")).getAbsolutePath()
 						.equalsIgnoreCase((String) retorno.get("fileroute"))) {
-					System.out.println("el campo del archivo de origen esta mal");
-					decriptFrameSiguiente = false;
+					decryptFrame.outDirTextRoute.setText("** Campo Incorrecto **");
+
+					decryptFrameChoose = false;
 				}
 			} else {
-				decryptFrame.siguienteButton.removeMouseListener(decryptFrame.siguienteButton.getMouseListeners()[1]);
-				decryptFrame.encryptedFileSelectButton.removeMouseListener(decryptFrame.encryptedFileSelectButton.getMouseListeners()[1]);
-				decryptFrame.outDirButton.removeMouseListener(decryptFrame.outDirButton.getMouseListeners()[1]);
-				decryptFrame.siguienteButton.removeMouseListener(decryptFrame.siguienteButton.getMouseListeners()[1]);
+				decryptFrameChoose=false;
+				
+			}
+			if(decryptFrame.fileNameValue.getText().equals("") || String.valueOf(decryptFrame.passwordField.getPassword()).equals("")){
+				decryptFrameChoose=false;
 			}
 
-		} while (!decriptFrameSiguiente);
+		} while (!decryptFrameChoose);
+		decryptFrame.siguienteButton.removeMouseListener(decryptFrame.siguienteButton.getMouseListeners()[1]);
+				decryptFrame.encryptedFileSelectButton.removeMouseListener(decryptFrame.encryptedFileSelectButton.getMouseListeners()[1]);
+				decryptFrame.outDirButton.removeMouseListener(decryptFrame.outDirButton.getMouseListeners()[1]);
 		retorno.put("outfilename", decryptFrame.fileNameValue.getText());
 		retorno.put("pass", String.valueOf(decryptFrame.passwordField.getPassword()));
 
