@@ -3,15 +3,13 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.Scanner;
+
 
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -91,8 +89,6 @@ public class SecurePhotos {
 			bw.write(fileExtension);
 			bw.newLine();
 			bw.close();
-			Scanner scan= new Scanner(System.in);
-			scan.nextLine();
 			InputStream inputStream = new ByteArrayInputStream(encrypted);
 			OutputStream outputStream = null;
 

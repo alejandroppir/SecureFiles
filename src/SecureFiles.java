@@ -11,7 +11,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Scanner;
 import java.util.TreeMap;
 
 import javax.swing.JFileChooser;
@@ -22,7 +21,7 @@ import org.apache.commons.io.IOUtils;
 
 import javax.swing.JPanel;
 
-public class launch {
+public class SecureFiles {
 
 	private static JPanel contentPane;
 	static int returnValue = 0;
@@ -387,8 +386,8 @@ public class launch {
 		
 		
 		File directory = (File) campos.get("directory");
-		
-		String outFileName = "\\" + campos.get("outfilename");
+		String[] auxFilename = ((String) campos.get("outfilename")).split("\\.");
+		String outFileName = "\\" + auxFilename[0];
 		
 		// extension + datos
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
