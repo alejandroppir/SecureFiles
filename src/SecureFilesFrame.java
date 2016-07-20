@@ -27,7 +27,7 @@ public class SecureFilesFrame extends JFrame{
 	JLabel title; // titulo aplicacion
 	JLabel description; //descripcion de la aplicacion
 	JPanel buttonsPanel; //jpanel de los botones
-	JButton addImageButton; //boton de addimage
+	JButton addFileButton; //boton de addfile
 	JButton decrypButton; //boton de desencriptar
 	/**
 	 * Launch the application.
@@ -133,17 +133,17 @@ public class SecureFilesFrame extends JFrame{
 		/**
 		 *  botones
 		 */
-		addImageButton = new JButton("Añadir imagen nueva");
-		addImageButton.setMaximumSize(new Dimension(200, 50));
-		addImageButton.setPreferredSize(new Dimension(200, 50));
-		addImageButton.setMinimumSize(new Dimension(200, 50));
-		GridBagConstraints constraints_addImage = new GridBagConstraints();
-		constraints_addImage.insets = new Insets(0, 0, 5, 0);
-		constraints_addImage.gridx = 0;
-		constraints_addImage.gridy = 0;
-		buttonsPanel.add(addImageButton, constraints_addImage);
+		addFileButton = new JButton("Añadir archivo nuevo");
+		addFileButton.setMaximumSize(new Dimension(200, 50));
+		addFileButton.setPreferredSize(new Dimension(200, 50));
+		addFileButton.setMinimumSize(new Dimension(200, 50));
+		GridBagConstraints constraints_addFile = new GridBagConstraints();
+		constraints_addFile.insets = new Insets(0, 0, 5, 0);
+		constraints_addFile.gridx = 0;
+		constraints_addFile.gridy = 0;
+		buttonsPanel.add(addFileButton, constraints_addFile);
 
-		decrypButton = new JButton("Desencriptar imagenes");
+		decrypButton = new JButton("Desencriptar archivos");
 		decrypButton.setPreferredSize(new Dimension(200, 50));
 		decrypButton.setMinimumSize(new Dimension(200, 50));
 		decrypButton.setMaximumSize(new Dimension(200, 50));

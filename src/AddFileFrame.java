@@ -18,7 +18,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 
 
-public class AddImageFrame extends JFrame{
+public class AddFileFrame extends JFrame{
 
 	/**
 	 * 
@@ -64,7 +64,7 @@ public class AddImageFrame extends JFrame{
 	/**
 	 * Create the application.
 	 */
-	public AddImageFrame() {
+	public AddFileFrame() {
 		initialize();
 		}
 
@@ -77,7 +77,7 @@ public class AddImageFrame extends JFrame{
 		
 		 setPreferredSize(new Dimension(450, 300));
 		 setMinimumSize(new Dimension(450, 300));
-		 setTitle("A\u00F1adir imagen");
+		 setTitle("A\u00F1adir archivo");
 		 setLocationRelativeTo(null);
 		 setBounds(100, 100, 450, 300);
 		 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

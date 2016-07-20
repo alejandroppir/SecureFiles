@@ -77,7 +77,7 @@ public class DecryptFrame extends JFrame{
 		
 		 setPreferredSize(new Dimension(450, 300));
 		 setMinimumSize(new Dimension(450, 300));
-		 setTitle("A\u00F1adir imagen");
+		 setTitle("Desencriptar archivo");
 		 setLocationRelativeTo(null);
 		 setBounds(100, 100, 450, 300);
 		 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
