@@ -157,22 +157,22 @@ public class SecureFiles {
 			return;
 		}
 
-		File file = (File) campos.get("file");
-		String fileRoute = (String) campos.get("fileroute");
-		String[] split = fileRoute.split("\\.");
-		String fileExtension = split[split.length - 1];
-		if (!file.getAbsolutePath().equalsIgnoreCase(fileRoute)) {
-			file = new File(fileRoute);
-		}
-		fis = new FileInputStream(file);
-
-		byte[] bytess = IOUtils.toByteArray(fis);
+		File[] file = (File[]) campos.get("file");
 		File directory = (File) campos.get("directory");
 		String outFileName = "\\" + campos.get("outfilename");
 		String pass = (String) campos.get("pass");
+		File outFile = new File(directory.getAbsolutePath() + outFileName);
+		
+		for (File fil : file) {
+			String fileRoute = fil.getAbsolutePath();
+			String[] split = fileRoute.split("\\.");
+			String fileExtension = split[split.length - 1];
+			
+		fis = new FileInputStream(fil);
+
+		byte[] bytess = IOUtils.toByteArray(fis);
 
 		byte[] encrypted = Crypter.encrypt(bytess, pass);
-		File outFile = new File(directory.getAbsolutePath() + outFileName);
 
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(outFile, true))) {
 			bw.newLine();
@@ -190,7 +190,7 @@ public class SecureFiles {
 			}
 			outputStream.close();
 		} catch (Exception e) {
-		}
+		}}
 		fis.close();
 
 	}
@@ -202,13 +202,13 @@ public class SecureFiles {
 		addImageFrame.newFileSelectButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				File file = getRoute("file");
+				File[] file = getRoute("file");
 				if (file == null) {
 					return;
 				}
 				retorno.put("file", file);
-				retorno.put("fileroute", file.getAbsolutePath());
-				addImageFrame.newFileRtextRoute.setText(file.getAbsolutePath());
+				
+				addImageFrame.newFileRtextRoute.setText(file[0].getParent());
 
 				// addImageFrame.newFileSelectButton.removeMouseListener(addImageFrame.newFileSelectButton.getMouseListeners()[1]);
 			}
@@ -216,7 +216,9 @@ public class SecureFiles {
 		addImageFrame.outDirButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				File directory = getRoute("directory");
+				File[] f = getRoute("directory");
+				System.out.println(f[0].getAbsolutePath());
+				File directory = f[0];
 				if (directory == null) {
 					return;
 				}
@@ -241,7 +243,6 @@ public class SecureFiles {
 			public void mouseClicked(MouseEvent e) {
 				retorno.put("eleccion", 2);
 				addImageFrameChoose = true;
-				retorno.put("fileroute", addImageFrame.newFileRtextRoute.getText());
 
 			}
 		});
@@ -266,14 +267,9 @@ public class SecureFiles {
 				return retorno;
 				
 			}
-			if (retorno.containsKey("file")) {
-				if (!((File) retorno.get("file")).getAbsolutePath()
-						.equalsIgnoreCase((String) retorno.get("fileroute"))) {
-					addImageFrame.outDirTextRoute.setText("** Campo Incorrecto **");
-					addImageFrameChoose = false;
-				}
-			} else {
+			if (!retorno.containsKey("file") || !retorno.containsKey("directory")) {
 				addImageFrameChoose=false;
+				
 			}
 			if(addImageFrame.fileNameValue.getText().equals("") || String.valueOf(addImageFrame.passwordField.getPassword()).equals("")){
 				addImageFrameChoose=false;
@@ -292,33 +288,153 @@ public class SecureFiles {
 
 	}
 
-	public static File getRoute(String fileOrDirectory) {
-		File fichero = null;
-		try {
-			// ponemos el estilo del sistema operativo para la ventana
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e) {
+	private static void decryptPhoto(){
+		OutputStream outputStream = null;
+		int j=0;
+
+		TreeMap<String, Object> campos = decryptFrame();
+		if((int) campos.get("eleccion")!=2){
+			endFrameOption=1;
+			return;
+		}
+		File[] file = (File[]) campos.get("file");
+		
+		String pass = (String) campos.get("pass");
+		
+		
+		File directory = (File) campos.get("directory");
+		String[] auxFilename = ((String) campos.get("outfilename")).split("\\.");
+		String outFileName = "\\" + auxFilename[0];
+		
+		// extension + datos
+		for (File fil : file) {
+			
+		try (BufferedReader br = new BufferedReader(new FileReader(fil))) {
+			while (br.ready()) {
+				String extension= br.readLine();
+				if(extension.equals("")){
+					extension = br.readLine();
+				}
+				byte[] decrypted = Crypter.decrypt(br.readLine().getBytes(), pass);
+				if(decrypted==null){
+					return;
+				}
+				InputStream inputStream = new ByteArrayInputStream(decrypted);
+				
+				try {
+					String outputFile = outFileName+ j + "." + extension;
+					outputStream = new FileOutputStream(new File(directory.getAbsolutePath() + outputFile));
+
+					int read = 0;
+					byte[] bytes = new byte[1024];
+
+					while ((read = inputStream.read(bytes)) != -1) {
+						outputStream.write(bytes, 0, read);
+					}
+					outputStream.close();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				j++;
+				inputStream.close();
+			}
+			br.close();
+		} catch (IOException e) {
+			System.out.println("excepcion");
 			e.printStackTrace();
-		}
-		// Creamos el objeto JFileChooser
-		JFileChooser fc = new JFileChooser();
-		fc.setCurrentDirectory(new File("C:\\Users\\Alex\\Desktop\\Nueva carpeta"));
-		if (fileOrDirectory.equalsIgnoreCase("directory")) {
-			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		} else {
-			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		}
-		// Abrimos la ventana, guardamos la opcion seleccionada por el usuario
-		int seleccion = fc.showOpenDialog(contentPane);
-
-		// Si el usuario, pincha en aceptar
-		if (seleccion == JFileChooser.APPROVE_OPTION) {
-			fichero = fc.getSelectedFile();
-		}
-		return fichero;
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			System.out.println("algo imprimiendo aqui");
+			e1.printStackTrace();
+		}}
 	}
+	
+	private static TreeMap<String, Object> decryptFrame(){
+		TreeMap<String, Object> retorno = new TreeMap<String, Object>();
+		decryptFrameChoose=false;
 
+		decryptFrame.encryptedFileSelectButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				File[] file = getRoute("file");
+				if (file == null) {
+					return;
+				}
+				retorno.put("file", file);
+				decryptFrame.encryptedFileTextRoute.setText(file[0].getParent());
+
+			}
+		});
+		decryptFrame.outDirButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				File directory = getRoute("directory")[0];
+				if (directory == null) {
+					return;
+				}
+				retorno.put("directory", directory);
+				retorno.put("directoryroute", directory.getAbsolutePath());
+				decryptFrame.outDirTextRoute.setText(directory.getAbsolutePath());
+
+			}
+		});
+		decryptFrame.anteriorButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				retorno.put("eleccion", 1);
+				decryptFrameChoose=true;
+
+			}
+		});
+		
+		decryptFrame.cancelarButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				retorno.put("eleccion", 3);
+				decryptFrameChoose=true;
+				
+			}
+		});
+		decryptFrame.siguienteButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				retorno.put("eleccion", 2);
+				decryptFrameChoose = true;
+			}
+		});
+		do {
+			while (decryptFrameChoose == false) {
+				try {
+
+					Thread.sleep(1);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if((int) retorno.get("eleccion")!=2){
+				return retorno;
+				
+			}
+			if (!retorno.containsKey("file") || !retorno.containsKey("directory")) {
+				decryptFrameChoose=false;
+				
+			}
+			if(decryptFrame.fileNameValue.getText().equals("") || String.valueOf(decryptFrame.passwordField.getPassword()).equals("")){
+				decryptFrameChoose=false;
+			}
+
+		} while (!decryptFrameChoose);
+		decryptFrame.siguienteButton.removeMouseListener(decryptFrame.siguienteButton.getMouseListeners()[1]);
+				decryptFrame.encryptedFileSelectButton.removeMouseListener(decryptFrame.encryptedFileSelectButton.getMouseListeners()[1]);
+				decryptFrame.outDirButton.removeMouseListener(decryptFrame.outDirButton.getMouseListeners()[1]);
+		retorno.put("outfilename", decryptFrame.fileNameValue.getText());
+		retorno.put("pass", String.valueOf(decryptFrame.passwordField.getPassword()));
+
+		return retorno;
+		
+	}
+	
 	private static void endEncryptationFrame() {
 		endEncryptationFrame.inicioButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -418,159 +534,42 @@ public class SecureFiles {
 		}
 		return;
 	}
-	
-	private static void decryptPhoto(){
-		OutputStream outputStream = null;
 
-		TreeMap<String, Object> campos = decryptFrame();
-		if((int) campos.get("eleccion")!=2){
-			endFrameOption=1;
-			return;
-		}
-		File file = (File) campos.get("file");
-		
-		String pass = (String) campos.get("pass");
-		
-		
-		File directory = (File) campos.get("directory");
-		String[] auxFilename = ((String) campos.get("outfilename")).split("\\.");
-		String outFileName = "\\" + auxFilename[0];
-		
-		// extension + datos
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			int j=0;
-			while (br.ready()) {
-				String extension= br.readLine();
-				if(extension.equals("")){
-					extension = br.readLine();
-				}
-				byte[] decrypted = Crypter.decrypt(br.readLine().getBytes(), pass);
-				if(decrypted==null){
-					return;
-				}
-				InputStream inputStream = new ByteArrayInputStream(decrypted);
-				
-				try {
-					String outputFile = outFileName+ j + "." + extension;
-					outputStream = new FileOutputStream(new File(directory.getAbsolutePath() + outputFile));
-
-					int read = 0;
-					byte[] bytes = new byte[1024];
-
-					while ((read = inputStream.read(bytes)) != -1) {
-						outputStream.write(bytes, 0, read);
-					}
-					outputStream.close();
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				j++;
-				inputStream.close();
-			}
-			br.close();
-		} catch (IOException e) {
-			System.out.println("excepcion");
+	public static File[] getRoute(String fileOrDirectory) {
+		File[] fichero = null;
+		File directory = null;
+		try {
+			// ponemos el estilo del sistema operativo para la ventana
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			System.out.println("algo imprimiendo aqui");
-			e1.printStackTrace();
 		}
+		// Creamos el objeto JFileChooser
+		JFileChooser fc = new JFileChooser();
+		String username = System.getProperty("user.name");
+		fc.setCurrentDirectory(new File("C:\\Users\\" + username));
+		if (fileOrDirectory.equalsIgnoreCase("directory")) {
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int seleccion = fc.showOpenDialog(contentPane);
+			
+			if (seleccion == JFileChooser.APPROVE_OPTION) {
+				 directory = fc.getSelectedFile();
+				 fichero=new File[]{directory};
+			}
+
+		} else {
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fc.setMultiSelectionEnabled(true);
+			int seleccion = fc.showOpenDialog(contentPane);
+			
+			// Si el usuario, pincha en aceptar
+			if (seleccion == JFileChooser.APPROVE_OPTION) {
+				fichero = fc.getSelectedFiles();
+			}
+		}
+		// Abrimos la ventana, guardamos la opcion seleccionada por el usuario
+		return fichero;
 	}
-	
-	private static TreeMap<String, Object> decryptFrame(){
-		TreeMap<String, Object> retorno = new TreeMap<String, Object>();
-		decryptFrameChoose=false;
 
-		decryptFrame.encryptedFileSelectButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				File file = getRoute("file");
-				if (file == null) {
-					return;
-				}
-				retorno.put("file", file);
-				retorno.put("fileroute", file.getAbsolutePath());
-				decryptFrame.encryptedFileTextRoute.setText(file.getAbsolutePath());
-
-			}
-		});
-		decryptFrame.outDirButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				File directory = getRoute("directory");
-				if (directory == null) {
-					return;
-				}
-				retorno.put("directory", directory);
-				retorno.put("directoryroute", directory.getAbsolutePath());
-				decryptFrame.outDirTextRoute.setText(directory.getAbsolutePath());
-
-			}
-		});
-		decryptFrame.anteriorButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e){
-				retorno.put("eleccion", 1);
-				decryptFrameChoose=true;
-
-			}
-		});
-		
-		decryptFrame.cancelarButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e){
-				retorno.put("eleccion", 3);
-				decryptFrameChoose=true;
-				
-			}
-		});
-		decryptFrame.siguienteButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				retorno.put("eleccion", 2);
-				decryptFrameChoose = true;
-				retorno.put("fileroute", decryptFrame.encryptedFileTextRoute.getText());
-			}
-		});
-		do {
-			while (decryptFrameChoose == false) {
-				try {
-
-					Thread.sleep(1);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-			}
-			if((int) retorno.get("eleccion")!=2){
-				return retorno;
-				
-			}
-			if (retorno.containsKey("file")) {
-				if (!((File) retorno.get("file")).getAbsolutePath()
-						.equalsIgnoreCase((String) retorno.get("fileroute"))) {
-					decryptFrame.outDirTextRoute.setText("** Campo Incorrecto **");
-
-					decryptFrameChoose = false;
-				}
-			} else {
-				decryptFrameChoose=false;
-				
-			}
-			if(decryptFrame.fileNameValue.getText().equals("") || String.valueOf(decryptFrame.passwordField.getPassword()).equals("")){
-				decryptFrameChoose=false;
-			}
-
-		} while (!decryptFrameChoose);
-		decryptFrame.siguienteButton.removeMouseListener(decryptFrame.siguienteButton.getMouseListeners()[1]);
-				decryptFrame.encryptedFileSelectButton.removeMouseListener(decryptFrame.encryptedFileSelectButton.getMouseListeners()[1]);
-				decryptFrame.outDirButton.removeMouseListener(decryptFrame.outDirButton.getMouseListeners()[1]);
-		retorno.put("outfilename", decryptFrame.fileNameValue.getText());
-		retorno.put("pass", String.valueOf(decryptFrame.passwordField.getPassword()));
-
-		return retorno;
-		
-	}
-	
 }
