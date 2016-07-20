@@ -58,32 +58,24 @@ public class SecureFiles {
 					//parte para add Image Frame
 					addImageFrame = new AddImageFrame();
 					addImageFrame.setVisible(true);
-					System.out.println("1");
 					encryptPhoto();
-					System.out.println("2");
 
 					addImageFrame.dispose();
-					System.out.println("3");
 
 					endEncryptationFrame.setVisible(true);
 					endEncryptationFrame();
-					System.out.println("4");
 
 				} else {
 					//parte para decript frame
 					decryptFrame = new DecryptFrame();
 					decryptFrame.setVisible(true);
-					System.out.println("5");
 
 					decryptPhoto();
-					System.out.println("6");
 
 					decryptFrame.dispose();
-					System.out.println("7");
 
 					endDecryptationFrame.setVisible(true);
 					endDecryptationFrame();
-					System.out.println("8");
 
 				}
 				while(endFrameOption==0){
@@ -217,7 +209,6 @@ public class SecureFiles {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				File[] f = getRoute("directory");
-				System.out.println(f[0].getAbsolutePath());
 				File directory = f[0];
 				if (directory == null) {
 					return;
