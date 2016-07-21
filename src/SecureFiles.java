@@ -32,6 +32,7 @@ public class SecureFiles {
 	static EndEncryptationFrame endEncryptationFrame;
 	static DecryptFrame decryptFrame;
 	static EndDecryptationFrame endDecryptationFrame;
+	static ProcessProgressBar processBar;
 
 
 	public static void main(String[] args) throws ClassNotFoundException, InstantiationException,
@@ -58,9 +59,16 @@ public class SecureFiles {
 					//parte para add File Frame
 					addFileFrame = new AddFileFrame();
 					addFileFrame.setVisible(true);
-					encryptPhoto();
+					/*encryptPhoto();
 
-					addFileFrame.dispose();
+					addFileFrame.dispose();*/
+					processBar = new ProcessProgressBar();
+					processBar.progressBar.setMaximum(100);
+					AddFileWorker addFile= new AddFileWorker(processBar);
+					addFile.execute();
+					addFile.get();
+					processBar.dispose();
+
 
 					endEncryptationFrame.setVisible(true);
 					endEncryptationFrame();
@@ -70,10 +78,16 @@ public class SecureFiles {
 					decryptFrame = new DecryptFrame();
 					decryptFrame.setVisible(true);
 
-					decryptPhoto();
+					/*decryptPhoto();
 
-					decryptFrame.dispose();
-
+					decryptFrame.dispose();*/
+					processBar = new ProcessProgressBar();
+					processBar.progressBar.setMaximum(100);
+					DecryptWorker decrypt= new DecryptWorker(processBar);
+					decrypt.execute();
+					decrypt.get();
+					processBar.dispose();
+					
 					endDecryptationFrame.setVisible(true);
 					endDecryptationFrame();
 
@@ -139,7 +153,7 @@ public class SecureFiles {
 	}
 
 	//metodo para encriptar
-	public static void encryptPhoto() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+	private static void encryptPhoto() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
 			UnsupportedLookAndFeelException, Exception {
 		FileInputStream fis = null;
 
@@ -154,6 +168,10 @@ public class SecureFiles {
 		String outFileName = "\\" + campos.get("outfilename");
 		String pass = (String) campos.get("pass");
 		File outFile = new File(directory.getAbsolutePath() + outFileName);
+		
+		ProcessProgressBar processBar= new ProcessProgressBar();
+		processBar.progressBar.setMaximum(100);
+		processBar.setVisible(true);
 		
 		for (File fil : file) {
 			String fileRoute = fil.getAbsolutePath();
@@ -178,12 +196,19 @@ public class SecureFiles {
 			int read = 0;
 			byte[] bytes = new byte[1024];
 			while ((read = inputStream.read(bytes)) != -1) {
+				
+				/**
+				 * 
+				 */
+				
 				outputStream.write(bytes, 0, read);
 			}
 			outputStream.close();
+			
 		} catch (Exception e) {
 		}}
 		fis.close();
+		processBar.dispose();
 
 	}
 
@@ -341,7 +366,7 @@ public class SecureFiles {
 		}}
 	}
 	
-	private static TreeMap<String, Object> decryptFrame(){
+	public static TreeMap<String, Object> decryptFrame(){
 		TreeMap<String, Object> retorno = new TreeMap<String, Object>();
 		decryptFrameChoose=false;
 
